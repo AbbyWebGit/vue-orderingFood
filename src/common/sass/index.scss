@@ -1,7 +1,26 @@
- @mixin bg-image($url) {
-     background-image: url($url+"@2x.png");
-     @media（-webkit-min-device-pixel-ratio: 3）,
-     (min-device-pixel-ratio: 3) {
-         background-image: url($url+"@3x.png");
-     }
- }
+@mixin bg-image($url) {
+    background-image: url($url+"@2x.png");
+    @media（-webkit-min-device-pixel-ratio: 3）,
+    (min-device-pixel-ratio: 3) {
+        background-image: url($url+"@3x.png");
+    }
+}
+
+body,
+html {
+    line-height: 1;
+    font-weight: 200;
+    font-family: 'PingFang SC', 'STHeitiSC-Light', 'Helvetica-Light', arial, sans-serif;
+}
+
+.clearfix {
+    display: inline-block;
+    &:after {
+        display: block;
+        content: ".";
+        height: 0;
+        line-height: 0;
+        clear: both;
+        visibility: hidden;
+    }
+}

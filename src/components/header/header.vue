@@ -1,5 +1,6 @@
 <template>
   <div class="header">
+    <!-- 头部信息 -->
     <div class="content-wrapper">
       <div class="avatar">
         <img width="64"  height="64" v-bind:src="seller.avatar">
@@ -22,7 +23,8 @@
         <i class="icon-keyboard_arrow_right"></i>
       </div>
   </div>
-  <div  class="bulletin-wrapper">
+  <!-- 公告 -->
+  <div  class="bulletin-wrapper" @click="showDetail">
     <span class="bulletin-title"></span>
     <span class="bulletin-text">{{seller.bulletin}}</span>
     <i class="icon-keyboard_arrow_right"></i>
@@ -30,7 +32,13 @@
  <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
   </div>
-  <div class="detail" v-show="detailShow"></div>
+  <!-- 弹层 -->
+  <div class="detail" v-show="detailShow">
+     <div class="detail-wrapper clearfix">
+       <div class="detail-main"></div>
+     </div>
+     <div class="detail-close"></div>
+  </div>
 </div>
 
 </template>
@@ -41,30 +49,24 @@ export default {
     // 子组件接受父组件的数据
     seller: Object
   },
-  data(){
-    return{
+  data() {
+    return {
       // 定义弹层的弹出与隐藏
-      detailShow:false
+      detailShow: false
     };
   },
-  // methods:{
-  //  showDetail(){
-  //    this.detailShow=true;
-  //  }  
-  // },
-   methods: {
-      showDetail() {
-        this.detailShow = true;
-      },
-      hideDetail() {
-        this.detailShow = false;
-      }
+  methods: {
+    showDetail() {
+      this.detailShow = true;
     },
+    hideDetail() {
+      this.detailShow = false;
+    }
+  },
   created() {
     // 注册到vue的实体上面
     this.classMap = ["decrease", "discount", "special", "invoice", "guarantee"];
-  },
-
+  }
 };
 </script>
 
@@ -72,7 +74,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../common/sass/index.scss";
-@import "../../common/sass/icon.scss";
 
 .header {
   color: #ffffff;
@@ -101,7 +102,7 @@ export default {
           vertical-align: top;
           width: 30px;
           height: 18px;
-          @include bg-image("brand");
+          // @include bg-image("brand");
           background-size: 30px 18px;
           background-repeat: no-repeat;
         }
@@ -170,7 +171,7 @@ export default {
       }
     }
   }
-// 公告栏
+  // 公告栏
   .bulletin-wrapper {
     position: relative;
     height: 28px;
@@ -209,22 +210,21 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1; 
+    z-index: -1;
     filter: blur(10px);
   }
   // 详细信息的弹层
-   .detail{
-      position: fixed;  
-      z-index: 100;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      transition: all 0.5s;
-      filter: blur(10px);
-      background: rgba(7, 17, 27, 0.2)
-      
-      }
+  .detail {
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    transition: all 0.5s;
+    filter: blur(10px);
+    background: rgba(7, 17, 27, 0.2);
+  }
 }
 </style>

@@ -6,8 +6,8 @@ import Router from 'vue-router'
 import router from './router/index'
 import VueResource from 'vue-resource'
 
-// import '/src/common/sass/index.scss'
-// import '/src/common/sass/icon.scss'
+import './common/sass/index.scss'
+import './common/sass/icon.scss'
 
 Vue.use(Router);
 Vue.use(VueResource)
