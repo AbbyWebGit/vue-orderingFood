@@ -32,22 +32,56 @@
  <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
   </div>
-  <!-- 弹层 -->
-  <div class="detail" v-show="detailShow">
+  <!-- 弹层 vue动画配置-->
+   <transition name="fade">
+  <div class="detail" v-show="detailShow" >
      <div class="detail-wrapper clearfix">
-       <div class="detail-main"></div>
+       <!-- 内容 -->
+       <div class="detail-main">
+          <h1 class="name">{{seller.name}}</h1>
+          <!-- 评分的星星 -->
+          <div class="star-wrapper">
+            <star :size="48"  :score="seller.score"></star>
+          </div>
+          <div class="title">
+            <div class="line"></div>
+            <div class="text">优惠信息</div>
+            <div class="line"></div>
+          </div>
+          <!-- 优惠信息列表 -->
+           <ul v-if="seller.supports" class="supports">
+              <li class="support-item" v-for="(item,index) in seller.supports">
+                <span class="icon" :class="classMap[seller.supports[index].type]"></span>
+                <span class="text">{{seller.supports[index].description}}</span>
+              </li>
+            </ul>
+            <div class="title">
+            <div class="line"></div>
+            <div class="text">商家公告</div>
+            <div class="line"></div>
+          </div>
+          <!-- 商家公告内容 -->
+          <div class="bulletin">
+            <p class="content">{{seller.bulletin}}</p>
+          </div>
+       </div>
      </div>
-     <div class="detail-close"></div>
+     <!-- 关闭按钮 -->
+     <div class="detail-close" @click="hideDetail">
+       <i class="icon-close"></i>
+     </div>
   </div>
+  </transition>
 </div>
 
 </template>
 
-<script>
+<script >
+import star from "../star/star";
 export default {
   props: {
     // 子组件接受父组件的数据
-    seller: Object
+    seller: {}
   },
   data() {
     return {
@@ -66,6 +100,9 @@ export default {
   created() {
     // 注册到vue的实体上面
     this.classMap = ["decrease", "discount", "special", "invoice", "guarantee"];
+  },
+  components: {
+    star
   }
 };
 </script>
@@ -74,6 +111,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../common/sass/index.scss";
+@import '../../common/sass/icon.scss';
 
 .header {
   color: #ffffff;
@@ -102,7 +140,7 @@ export default {
           vertical-align: top;
           width: 30px;
           height: 18px;
-          // @include bg-image("brand");
+          @include bg-image("brand");
           background-size: 30px 18px;
           background-repeat: no-repeat;
         }
@@ -149,7 +187,7 @@ export default {
         }
       }
     }
-    // 几个优惠信息
+    // 单个优惠信息
     .support-count {
       position: absolute;
       right: 12px;
@@ -222,9 +260,120 @@ export default {
     width: 100%;
     height: 100%;
     overflow: auto;
-    transition: all 0.5s;
-    filter: blur(10px);
-    background: rgba(7, 17, 27, 0.2);
+    
+    // 背景虚化
+    backdrop-filter: blur(10px);
+    opacity: 1; //这是动画设置
+    background: rgba(7, 17, 27, 0.8);
+    // vue动画配置
+    &.fade-enter-active,
+    &.fade-leave-active {
+      //vue的动画需要参考vue动画配置理解
+      transition: all 0.5s;
+    }
+    &.fade-enter,
+    &.fade-leave-active {
+      opacity: 0;
+      background: rgba(7, 17, 27, 0);
+    }
+
+    .detail-wrapper {
+      min-height: 100%;
+      width: 100%;
+      .detail-main {
+        margin-top: 64px;
+        padding-bottom: 64px;
+      }
+      .name {
+        line-height: 16px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      // 评论分数的星星
+      .star-wrapper {
+        margin-top: 18px;
+        padding: 2px 0;
+        text-align: center;
+      }
+      .title {
+        display: flex;
+        width: 80%;
+        margin: 30px auto 24px auto;
+        .line {
+          flex: 1;
+          position: relative;
+          top: -6px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .text {
+          padding: 0 12px;
+          font-weight: 700;
+          font-size: 14px;
+        }
+      }
+      // 优惠信息
+      .supports {
+        width: 80%;
+        margin: 0 auto;
+        .support-item {
+          padding: 0 12px;
+          margin-bottom: 12px;
+          font-size: 0;
+          &:last-child {
+            margin-bottom: 0;
+          }
+          .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            vertical-align: top;
+            margin-right: 6px;
+            background-size: 16px 16px;
+            background-repeat: no-repeat;
+            &.decrease {
+              @include bg-image("decrease_2");
+            }
+            &.discount {
+              @include bg-image("discount_2");
+            }
+            &.guarantee {
+              @include bg-image("guarantee_2");
+            }
+            &.invoice {
+              @include bg-image("invoice_2");
+            }
+            &.special {
+              @include bg-image("special_2");
+            }
+          }
+          .text {
+            line-height: 16px;
+            font-size: 12px;
+          }
+        }
+      }
+      // 商家公告
+      .bulletin {
+        width: 80%;
+        margin: 0 auto;
+        .content {
+          padding: 0 12px;
+          line-height: 24px;
+          font-size: 12px;
+        }
+      }
+    }
+    // 关闭按钮
+    .detail-close {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      margin: -64px auto 0;
+      clear: both;
+      font-size: 32px;
+      color: #ffffff;
+    }
   }
 }
 </style>

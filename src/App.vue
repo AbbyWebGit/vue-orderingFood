@@ -22,29 +22,29 @@ import vheader from "./components/header/header";
 export default {
   data() {
     return {
-      seller: {}
+      seller: {},
+      goods:[],
+      ratings:[],
+    
     };
   },
-  // mounted: function() {
-  //   this.$nextTick(function() {
-  //     this.cartView();
-  //   });
-  // },
-  // methods: {
-  //   cartView() {
-  //     //es6
-  //     this.$http.get("data.json", { id: 123 }).then(res => {
-  //       this.seller = Object.assign({}, this.seller, res.data.seller);
-  //       //console.log(this.seller);
-  //     });
-  //   }
-  // },
+ 
 
-  created() {
-    this.$http.get("data.json", { id: 123 }).then(res => {
+  created() {                                                                                                                                                                                                                                                              
+    this.$http.get("data.json").then(res => {
+      // es6深度复制对象
       this.seller = Object.assign({}, this.seller, res.data.seller);
+      // es6深度复制数组
+      this.goods = [...res.data.goods];
+      this.ratings =  [...this.ratings, res.data.ratings];
+      // console.log(typeof(this.seller));
+      // 触发当前实例上的事件，并将参数回调，数据发射给兄弟组件
+      Event.$emit("getDat",this.goods);
       //console.log(this.seller.avatar);
     });
+  },
+  mounted(){
+     
   },
   components: {
     vheader: vheader
