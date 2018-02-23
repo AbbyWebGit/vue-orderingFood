@@ -19,10 +19,10 @@
 <div class="foods-wrapper" ref="foodsWrapper" >
 
   <ul>
-   <li v-for="(item,key) in dat"  class="food-list food-list-hook">
+   <li v-for="(item,key) in dat"  class="food-list food-list-hook" :key="key">
      <h1 class="title">{{item.name}}</h1>
       <ul>
-         <li v-for="food in item.foods" class="food-item" >
+         <li v-for="(food,ind) in item.foods" class="food-item" :key="ind" >
          <div class="icon">
           <img :src="food.icon" width="57" height="57">
           </div>
@@ -35,15 +35,16 @@
             <div class="price">
               <span class="now">￥{{food.price}}</span><span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
             </div>
+            <div class="cartcontrol-wrapper">
+              <cartcontrol :food="food"></cartcontrol>
+            </div>
          </div>
         </li>
        </ul>
     </li>
    </ul>
-
-     
 </div>
-<shopcart></shopcart>
+<shopcart :select-foods="selectFoods"  :delivery-price="seller.deliveryPrice"  :min-price="seller.minPrice"></shopcart>
 
  </div>
 </template>
@@ -52,11 +53,21 @@
 // import { mapGetters} from 'vuex'
 //导入better-scroll
 import BScroll from "better-scroll";
+// 引入购物车组件
 import shopcart from "../shopcart/shopcart";
+// 引入商品数量控制组件
+import cartcontrol from "../cartcontrol/cartcontrol";
+
 export default {
+  // 接收从app中路由传递过来的数据
+  props: {
+    seller: {
+      type: Object
+    }
+  },
   data() {
     return {
-      dat: [{}],
+      dat: [],
       //foods区域的各个区块高度
       listHeight: [],
       // 滚动位置
@@ -83,14 +94,30 @@ export default {
         }
       }
       return 0;
+    },
+    selectFoods() {
+      let foods = [];
+      if (this.dat.length>0){
+        this.dat.forEach(good => {
+          good.foods.forEach(food => {
+            if (food.count) {
+              foods.push(food);
+            }
+          });
+        });
+      }
+      return foods;
+     
     }
   },
+
   created() {
     // 注册到vue的实体上面
     this.classMap = ["decrease", "discount", "special", "invoice", "guarantee"];
     // 接收app组件传递的值，监听当前实例上的自定义事件。事件可以由vm.$emit触发。回调函数会接收所有传入事件触发函数的额外参数。
     Event.$on("getDat", dat => {
       this.dat = dat;
+      // console.log(this.dat);
       //使用$nextTick来等待异步完成之后更新dom
       this.$nextTick(() => {
         this._initScroll();
@@ -122,7 +149,8 @@ export default {
       });
       this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
         // 结合BScroll的接口使用,3实时派发scroll事件
-        probeType: 3
+        probeType: 3,
+        click: true
       });
       // better-scroll插件的接口，实时监听scroll事件，回调函数返回的pos是鼠标坐标位置
       this.foodsScroll.on("scroll", pos => {
@@ -157,7 +185,8 @@ export default {
     // }
   },
   components: {
-    shopcart
+    shopcart,
+    cartcontrol
   },
 
   mounted() {
@@ -255,6 +284,7 @@ export default {
     }
     .content {
       flex: 1;
+      position: relative;
       .name {
         margin: 2px 0 8px 0;
         height: 14px;
@@ -291,6 +321,11 @@ export default {
           font-size: 10px;
           color: rgb(147, 153, 159);
         }
+      }
+      .cartcontrol-wrapper {
+        position: absolute;
+        right: 0;
+        bottom: 12px;
       }
       .cartcontrol-wrapper {
         position: absolute;

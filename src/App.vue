@@ -12,7 +12,7 @@
        <router-link to="/seller">商家</router-link>
        </div>
    </div>
-   <router-view></router-view>
+   <router-view :seller="seller"></router-view>
   </div>
 </template>
 
@@ -41,6 +41,7 @@ export default {
       // 触发当前实例上的事件，并将参数回调，数据发射给兄弟组件
       Event.$emit("getDat",this.goods);
       //console.log(this.seller.avatar);
+      Event.$emit("getSeller",this.seller);
     });
   },
   mounted(){
